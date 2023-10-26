@@ -1,11 +1,12 @@
 package com.example.demo.security;
 
+import com.example.demo.config.ApplicationProperties;
 import com.example.demo.dto.UserDto;
 import com.example.demo.entity.UserEntity;
 import com.example.demo.service.IUserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,7 +17,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Base64;
@@ -25,11 +25,13 @@ import java.util.Date;
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final IUserService userService;
+    private final ApplicationProperties applicationProperties;
 
-    public AuthenticationFilter(IUserService userService,
-                                AuthenticationManager authenticationManager) {
+    public AuthenticationFilter(IUserService userService, AuthenticationManager authenticationManager,
+                                ApplicationProperties applicationProperties) {
         super(authenticationManager);
         this.userService = userService;
+        this.applicationProperties = applicationProperties;
     }
 
     @Override
@@ -53,18 +55,17 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                                             FilterChain chain, Authentication authResult) {
         String userName = ((UserEntity) authResult.getPrincipal()).getEmail();
         UserDto userDetails = userService.getUserDetailsByEmail(userName);
-        String tokenSecret = "tokensecret";
+        String tokenSecret = applicationProperties.getSecretKey();
         byte[] secretKeyBytes = Base64.getEncoder().encode(tokenSecret.getBytes());
-        SecretKey secretKey = new SecretKeySpec(secretKeyBytes, SignatureAlgorithm.HS512.getJcaName());
-
+        SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyBytes);
         Instant now = Instant.now();
-
-        String token = Jwts.builder().setSubject(userDetails.getUserId())
-                .setExpiration(
-                        Date.from(now.plusMillis(86400000)))
-                .setIssuedAt(Date.from(now)).signWith(SignatureAlgorithm.HS512, secretKey).compact();
-        response.addHeader("token", token);
-        response.addHeader("userId", userDetails.getUserId());
+        String token = Jwts.builder()
+                .subject(userDetails.getUserId())
+                .expiration(Date.from(now.plusMillis(applicationProperties.getTokenExpiry())))
+                .issuedAt(Date.from(now))
+                .signWith(secretKey, Jwts.SIG.HS512).compact();
+        response.addHeader(applicationProperties.getTokenHeader(), token);
+        response.addHeader(applicationProperties.getUserIdHeader(), userDetails.getUserId());
     }
 }
 

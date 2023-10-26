@@ -39,6 +39,14 @@ spring:
     user:
       name: admin
       password: admin
+application:
+  secretKey: hfgry463hf746hf573ydh475fhy5739hfgry463hf746hf573ydh475fhy5739hfgry463hf746hf573ydh475fhy5739
+  tokenExpiry: 86400000
+  tokenHeader: token
+  userIdHeader: userId
+  authorizationHeader: Authorization
+  loginEndpoint: /login
+
 
 
 

@@ -16,25 +16,22 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(nullable=false, length=50)
+    @Column(nullable = false, length = 20)
     private String firstName;
 
-    @Column(nullable=false, length=50)
+    @Column(nullable = false, length = 20)
     private String lastName;
 
-    @Column(nullable=false, length=120, unique=true)
+    @Column(nullable = false, length = 20, unique = true)
     private String email;
 
-    @Column(nullable=false, unique=true)
+    @Column(nullable = false, unique = true)
     private String userId;
 
-    @Column(nullable=false, unique=true)
+    @Column(nullable = false, unique = true)
     private String encryptedPassword;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<RoleEntity> roles = new HashSet<>();
 }
