@@ -13,7 +13,7 @@ public class ApplicationProperties {
     String secretKey;
     Integer tokenExpiry;
     String tokenHeader;
-    String userIdHeader;
+    String customerIdHeader;
     String authorizationHeader;
     String loginEndpoint;
 }

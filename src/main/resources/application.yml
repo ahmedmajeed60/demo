@@ -27,7 +27,7 @@ spring:
     url: jdbc:h2:mem:testdb
     user: admin
     password: admin
-    change-log: classpath:/db/changelog/
+    change-log: classpath:/db/changelog/db.changelog-master.xml
     driver-class-name: org.h2.Driver
     database-change-log-lock-table: DATABASECHANGELOGLOCK
     database-change-log-table: DATABASECHANGELOG
@@ -43,7 +43,7 @@ application:
   secretKey: hfgry463hf746hf573ydh475fhy5739hfgry463hf746hf573ydh475fhy5739hfgry463hf746hf573ydh475fhy5739
   tokenExpiry: 86400000
   tokenHeader: token
-  userIdHeader: userId
+  customerIdHeader: customerId
   authorizationHeader: Authorization
   loginEndpoint: /login
 

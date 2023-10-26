@@ -7,12 +7,11 @@ import java.io.Serializable;
 
 @Getter
 @Setter
-public class UserDto implements Serializable {
+public class CustomerDto implements Serializable {
 
     private String firstName;
     private String lastName;
     private String email;
     private String password;
-    private String userId;
-    private String encryptedPassword;
+    private String customerId;
 }
