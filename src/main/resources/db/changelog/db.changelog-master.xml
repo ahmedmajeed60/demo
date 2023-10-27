@@ -34,7 +34,7 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
             </column>
         </createTable>
         <insert tableName="Customer">
-            <column name="id" value="1"/>
+            <column name="id" value="100"/>
             <column name="first_name" value="ahmed"/>
             <column name="last_name" value="majeed"/>
             <column name="email" value="ahmedmajeed60@gmail.com"/>
@@ -42,7 +42,7 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
             <column name="customer_id" value="610e3bc4-12b0-4e53-be8a-47f5153e05de"/>
         </insert>
         <insert tableName="Customer">
-            <column name="id" value="2"/>
+            <column name="id" value="101"/>
             <column name="first_name" value="ali"/>
             <column name="last_name" value="ahmed"/>
             <column name="email" value="aliahmed60@gmail.com"/>

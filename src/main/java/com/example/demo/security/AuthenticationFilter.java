@@ -2,18 +2,19 @@ package com.example.demo.security;
 
 import com.example.demo.config.ApplicationProperties;
 import com.example.demo.dto.CustomerDto;
-import com.example.demo.entity.CustomerEntity;
 import com.example.demo.service.ICustomerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.crypto.SecretKey;
@@ -40,7 +41,6 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         try {
             AuthenticationRequest authenticationRequest = new ObjectMapper()
                     .readValue(request.getInputStream(), AuthenticationRequest.class);
-
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     authenticationRequest.getEmail(), authenticationRequest.getPassword()
             );
@@ -53,7 +53,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                             FilterChain chain, Authentication authResult) {
-        String email = ((CustomerEntity) authResult.getPrincipal()).getEmail();
+        String email = ((User) authResult.getPrincipal()).getUsername();
         CustomerDto customerDto = customerService.getCustomerDetailsByEmail(email);
         String tokenSecret = applicationProperties.getSecretKey();
         byte[] secretKeyBytes = Base64.getEncoder().encode(tokenSecret.getBytes());
@@ -66,6 +66,13 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                 .signWith(secretKey, Jwts.SIG.HS512).compact();
         response.addHeader(applicationProperties.getTokenHeader(), token);
         response.addHeader(applicationProperties.getCustomerIdHeader(), customerDto.getCustomerId());
+    }
+
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+                                              AuthenticationException failed) throws IOException, ServletException {
+        super.unsuccessfulAuthentication(request, response, failed);
+        System.out.println(failed.getMessage());
     }
 }
 

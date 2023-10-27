@@ -17,8 +17,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @EnableMethodSecurity
-@Configuration
 @EnableWebSecurity
+@Configuration
 public class WebSecurityConfig {
 
     private final ICustomerService customerService;
@@ -38,19 +38,16 @@ public class WebSecurityConfig {
 
         AuthenticationManagerBuilder authenticationManagerBuilder =
                 http.getSharedObject(AuthenticationManagerBuilder.class);
-
         authenticationManagerBuilder.userDetailsService(customerService)
                 .passwordEncoder(bCryptPasswordEncoder);
-
         AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
-
         AuthenticationFilter authenticationFilter =
                 new AuthenticationFilter(customerService, authenticationManager, applicationProperties);
         authenticationFilter.setFilterProcessesUrl(applicationProperties.getLoginEndpoint());
-
         return http.authorizeHttpRequests((auth) -> auth
                         .requestMatchers(new AntPathRequestMatcher(Constant.ACTUATOR_URL)).permitAll()
                         .requestMatchers(new AntPathRequestMatcher(Constant.H2_CONSOLE_URL)).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher(Constant.CUSTOMER_URL)).permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilter(new AuthorizationFilter(authenticationManager, applicationProperties))
