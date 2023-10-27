@@ -6,7 +6,7 @@
 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     <changeSet id="202310260840" author="Ahmed Majeed">
         <createTable tableName="Customer">
-            <column name="id" type="bigint">
+            <column name="id" type="int">
                 <constraints primaryKey="true" primaryKeyName="customer_id_pk"/>
             </column>
             <column name="first_name" type="varchar(20)">
@@ -26,7 +26,7 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
             </column>
         </createTable>
         <createTable tableName="Role">
-            <column name="id" type="bigint">
+            <column name="id" type="int">
                 <constraints primaryKey="true" primaryKeyName="role_id_pk"/>
             </column>
             <column name="name" type="varchar(20)">
@@ -38,15 +38,15 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
             <column name="first_name" value="ahmed"/>
             <column name="last_name" value="majeed"/>
             <column name="email" value="ahmedmajeed60@gmail.com"/>
-            <column name="password" value="$2a$10$cQ.xBWb3qsugpq2krejYoOoD1de1AQb.2XDqk0Ll1tW/ToDTJucyK"/>
+            <column name="password" value="$2a$10$Y.yaRsbyzmNXkLSBqUnc2OLQVvctHW9wWZY7YyIvyk6feU4rEdTfq"/>
             <column name="customer_id" value="610e3bc4-12b0-4e53-be8a-47f5153e05de"/>
         </insert>
         <insert tableName="Customer">
             <column name="id" value="101"/>
-            <column name="first_name" value="ali"/>
+            <column name="first_name" value="junaid"/>
             <column name="last_name" value="ahmed"/>
             <column name="email" value="aliahmed60@gmail.com"/>
-            <column name="password" value="$2a$10$mWX5hkMkCVvB2MRNBHTMH.h7AXy44k2B6JORYgC7u1EwRJg3/QzlO"/>
+            <column name="password" value="$2a$10$kw7IikHItBRvA3UeVpOAreA1tISIn4w0jnlCrkQaFGBUH2pIHLdhu"/>
             <column name="customer_id" value="33b09170-ce8b-476d-888e-a96d5e1bd36a"/>
         </insert>
         <insert tableName="Role">
@@ -57,7 +57,7 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
             <column name="id" value="2"/>
             <column name="name" value="CLIENT"/>
         </insert>
-        <addAutoIncrement tableName="Customer" columnName="id" columnDataType="bigint" startWith="1" incrementBy="1"/>
-        <addAutoIncrement tableName="Role" columnName="id" columnDataType="bigint" startWith="1" incrementBy="1"/>
+        <addAutoIncrement tableName="Customer" columnName="id" columnDataType="int" startWith="1" incrementBy="1"/>
+        <addAutoIncrement tableName="Role" columnName="id" columnDataType="int" startWith="1" incrementBy="1"/>
     </changeSet>
 </databaseChangeLog>
