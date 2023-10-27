@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.CustomerDto;
+import com.example.demo.response.ApiResponse;
+import com.example.demo.response.ResponseBuilder;
 import com.example.demo.service.ICustomerService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,7 @@ public class CustomerController {
     @PostMapping(
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CustomerDto> createCustomer(@RequestBody @Valid CustomerDto customerDto) {
-        return ResponseEntity.ok(customerService.createCustomer(customerDto));
+    public ResponseEntity<ApiResponse<CustomerDto>> createCustomer(@RequestBody @Valid CustomerDto customerDto) {
+        return ResponseEntity.ok(ResponseBuilder.buildSuccessResponse(customerService.createCustomer(customerDto)));
     }
 }

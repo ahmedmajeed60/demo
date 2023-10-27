@@ -17,6 +17,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.crypto.SecretKey;
@@ -48,8 +49,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             Authentication authentication = new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(),
                     authenticationRequest.getPassword());
             return getAuthenticationManager().authenticate(authentication);
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage(), e);
+        } catch (Exception e) {
+            throw new UsernameNotFoundException(e.getMessage(), e);
         }
     }
 
@@ -74,7 +75,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                               AuthenticationException failed) throws IOException, ServletException {
         super.unsuccessfulAuthentication(request, response, failed);
-        LOGGER.error(failed.getMessage(), failed);
+        throw new UsernameNotFoundException(failed.getMessage(), failed);
     }
 }
 

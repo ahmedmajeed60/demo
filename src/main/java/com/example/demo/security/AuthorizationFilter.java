@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import javax.crypto.SecretKey;
@@ -56,8 +57,7 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
                 .build().parseSignedClaims(token)
                 .getPayload().getSubject();
         if (customerId == null) {
-            LOGGER.error("Authorization is failed due to invalid token [{}].", token);
-            return null;
+            throw new UsernameNotFoundException("Authorization is failed due to invalid token " + token);
         }
         LOGGER.debug("Authorization is successful for customerId [{}].", customerId);
         return new UsernamePasswordAuthenticationToken(customerId, null, new ArrayList<>());
