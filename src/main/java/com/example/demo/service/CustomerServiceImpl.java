@@ -5,6 +5,8 @@ import com.example.demo.entity.CustomerEntity;
 import com.example.demo.entity.RoleEntity;
 import com.example.demo.repository.CustomerRepository;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,6 +22,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class CustomerServiceImpl implements ICustomerService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomerServiceImpl.class);
 
     private final CustomerRepository customerRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -39,6 +43,8 @@ public class CustomerServiceImpl implements ICustomerService {
         customerDto.setPassword(bCryptPasswordEncoder.encode(customerDto.getPassword()));
         CustomerEntity customerEntity = modelMapper.map(customerDto, CustomerEntity.class);
         customerRepository.save(customerEntity);
+        LOGGER.debug("Customer with email [{}] is created successfully and assigned id [{}]",
+                customerDto.getEmail(), customerDto.getCustomerId());
         return modelMapper.map(customerEntity, CustomerDto.class);
     }
 

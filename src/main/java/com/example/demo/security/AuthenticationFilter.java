@@ -10,6 +10,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,6 +27,8 @@ import java.util.Date;
 
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationFilter.class);
+
     private final ICustomerService customerService;
     private final ApplicationProperties applicationProperties;
 
@@ -39,14 +43,13 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
         try {
-            AuthenticationRequest authenticationRequest = new ObjectMapper()
-                    .readValue(request.getInputStream(), AuthenticationRequest.class);
-            Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    authenticationRequest.getEmail(), authenticationRequest.getPassword()
-            );
+            AuthenticationRequest authenticationRequest = new ObjectMapper().readValue(request.getInputStream(),
+                    AuthenticationRequest.class);
+            Authentication authentication = new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(),
+                    authenticationRequest.getPassword());
             return getAuthenticationManager().authenticate(authentication);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -59,20 +62,19 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         byte[] secretKeyBytes = Base64.getEncoder().encode(tokenSecret.getBytes());
         SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyBytes);
         Instant now = Instant.now();
-        String token = Jwts.builder()
-                .subject(customerDto.getCustomerId())
+        String token = Jwts.builder().subject(customerDto.getCustomerId())
                 .expiration(Date.from(now.plusMillis(applicationProperties.getTokenExpiry())))
-                .issuedAt(Date.from(now))
-                .signWith(secretKey, Jwts.SIG.HS512).compact();
+                .issuedAt(Date.from(now)).signWith(secretKey, Jwts.SIG.HS512).compact();
         response.addHeader(applicationProperties.getTokenHeader(), token);
         response.addHeader(applicationProperties.getCustomerIdHeader(), customerDto.getCustomerId());
+        LOGGER.debug("Authentication is successful for customerId [{}].", customerDto.getCustomerId());
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                               AuthenticationException failed) throws IOException, ServletException {
         super.unsuccessfulAuthentication(request, response, failed);
-        System.out.println(failed.getMessage());
+        LOGGER.error(failed.getMessage(), failed);
     }
 }
 
