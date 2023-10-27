@@ -44,7 +44,7 @@ public class WebSecurityConfig {
         AuthenticationFilter authenticationFilter =
                 new AuthenticationFilter(customerService, authenticationManager, applicationProperties);
         authenticationFilter.setFilterProcessesUrl(applicationProperties.getLoginEndpoint());
-        return http.authorizeHttpRequests((auth) -> auth
+        return http.authorizeHttpRequests(auth -> auth
                         .requestMatchers(new AntPathRequestMatcher(Constant.ACTUATOR_URL)).permitAll()
                         .requestMatchers(new AntPathRequestMatcher(Constant.H2_CONSOLE_URL)).permitAll()
                         .requestMatchers(new AntPathRequestMatcher(Constant.CUSTOMER_URL)).permitAll()
@@ -59,7 +59,7 @@ public class WebSecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers(new AntPathRequestMatcher(Constant.H2_CONSOLE_URL));
+        return web -> web.ignoring().requestMatchers(new AntPathRequestMatcher(Constant.H2_CONSOLE_URL));
     }
 }
 
