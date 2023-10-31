@@ -29,8 +29,6 @@ spring:
     password: admin
     change-log: classpath:/db/changelog/db.changelog-master.xml
     driver-class-name: org.h2.Driver
-    database-change-log-lock-table: DATABASECHANGELOGLOCK
-    database-change-log-table: DATABASECHANGELOG
     clear-checksums: false
     drop-first: false
     enabled: true
@@ -42,10 +40,6 @@ spring:
 application:
   secretKey: hfgry463hf746hf573ydh475fhy5739hfgry463hf746hf573ydh475fhy5739hfgry463hf746hf573ydh475fhy5739
   tokenExpiry: 86400000
-  tokenHeader: token
-  customerIdHeader: customerId
-  authorizationHeader: Authorization
-  loginEndpoint: /login
 springdoc:
   api-docs:
     path: /api-docs

@@ -13,10 +13,11 @@ public class ResponseBuilder {
         return response;
     }
 
-    public static ApiResponse<?> buildErrorResponse(int status, String message) {
-        ApiResponse<?> response = new ApiResponse<>();
+    public static <T> ApiResponse<T> buildErrorResponse(int status, String message) {
+        ApiResponse<T> response = new ApiResponse<>();
         response.setStatus(status);
         response.setMessage(message);
+        response.setData(null);
         return response;
     }
 }

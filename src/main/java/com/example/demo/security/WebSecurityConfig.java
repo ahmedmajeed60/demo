@@ -1,7 +1,7 @@
 package com.example.demo.security;
 
-import com.example.demo.config.ApplicationProperties;
 import com.example.demo.service.ICustomerService;
+import com.example.demo.service.ITokenService;
 import com.example.demo.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -23,39 +23,32 @@ public class WebSecurityConfig {
 
     private final ICustomerService customerService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final ApplicationProperties applicationProperties;
-    private final TokenUtil tokenUtil;
+    private final ITokenService tokenService;
 
     @Autowired
     public WebSecurityConfig(ICustomerService customerService, BCryptPasswordEncoder bCryptPasswordEncoder,
-                             ApplicationProperties applicationProperties, TokenUtil tokenUtil) {
+                             ITokenService tokenService) {
         this.customerService = customerService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.applicationProperties = applicationProperties;
-        this.tokenUtil = tokenUtil;
+        this.tokenService = tokenService;
     }
 
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
         AuthenticationManagerBuilder authenticationManagerBuilder =
                 http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.userDetailsService(customerService)
                 .passwordEncoder(bCryptPasswordEncoder);
         AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
-        AuthenticationFilter authenticationFilter =
-                new AuthenticationFilter(authenticationManager, tokenUtil, applicationProperties, customerService);
-        authenticationFilter.setFilterProcessesUrl(applicationProperties.getLoginEndpoint());
         return http.authorizeHttpRequests(auth -> auth
                         .requestMatchers(new AntPathRequestMatcher(Constant.ACTUATOR_URL)).permitAll()
                         .requestMatchers(new AntPathRequestMatcher(Constant.H2_CONSOLE_URL)).permitAll()
                         .requestMatchers(new AntPathRequestMatcher(Constant.OPEN_API_URL)).permitAll()
                         .requestMatchers(new AntPathRequestMatcher(Constant.SWAGGER_URL)).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher(Constant.LOGIN_URL)).permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilter(new AuthorizationFilter(authenticationManager, applicationProperties,
-                        tokenUtil, customerService))
-                .addFilter(authenticationFilter)
+                .addFilter(new AuthorizationFilter(authenticationManager, tokenService, customerService))
                 .authenticationManager(authenticationManager)
                 .csrf().disable()
                 .build();

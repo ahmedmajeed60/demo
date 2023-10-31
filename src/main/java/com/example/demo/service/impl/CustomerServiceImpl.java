@@ -1,8 +1,9 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
 import com.example.demo.dto.CustomerDto;
 import com.example.demo.entity.CustomerEntity;
 import com.example.demo.repository.CustomerRepository;
+import com.example.demo.service.ICustomerService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

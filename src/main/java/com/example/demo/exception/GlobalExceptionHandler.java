@@ -14,28 +14,28 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<ApiResponse<?>> handleUsernameNotFoundException(UsernameNotFoundException exception) {
+    public ResponseEntity<ApiResponse<String>> handleUsernameNotFoundException(UsernameNotFoundException exception) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(ResponseBuilder.buildErrorResponse(HttpStatus.UNAUTHORIZED.value(),
                         exception.getMessage()));
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ApiResponse<?>> handleAccessDeniedException(AccessDeniedException exception) {
+    public ResponseEntity<ApiResponse<String>> handleAccessDeniedException(AccessDeniedException exception) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(ResponseBuilder.buildErrorResponse(HttpStatus.FORBIDDEN.value(),
                         exception.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<?>> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+    public ResponseEntity<ApiResponse<String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ResponseBuilder.buildErrorResponse(HttpStatus.BAD_REQUEST.value(),
                         exception.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<?>> handleException(Exception exception) {
+    public ResponseEntity<ApiResponse<String>> handleException(Exception exception) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ResponseBuilder.buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(),
                         exception.getMessage()));

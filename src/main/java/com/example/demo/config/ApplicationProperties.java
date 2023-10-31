@@ -12,8 +12,4 @@ import org.springframework.stereotype.Component;
 public class ApplicationProperties {
     String secretKey;
     Integer tokenExpiry;
-    String tokenHeader;
-    String customerIdHeader;
-    String authorizationHeader;
-    String loginEndpoint;
 }

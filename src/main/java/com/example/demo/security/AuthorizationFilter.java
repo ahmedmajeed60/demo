@@ -1,8 +1,8 @@
 package com.example.demo.security;
 
-import com.example.demo.config.ApplicationProperties;
 import com.example.demo.dto.CustomerDto;
 import com.example.demo.service.ICustomerService;
+import com.example.demo.service.ITokenService;
 import com.example.demo.util.Constant;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -24,17 +24,14 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizationFilter.class);
 
-    private final ApplicationProperties applicationProperties;
-    private final TokenUtil tokenUtil;
+    private final ITokenService tokenService;
     private final ICustomerService customerService;
 
     public AuthorizationFilter(AuthenticationManager authenticationManager,
-                               ApplicationProperties applicationProperties,
-                               TokenUtil tokenUtil,
+                               ITokenService tokenService,
                                ICustomerService customerService) {
         super(authenticationManager);
-        this.applicationProperties = applicationProperties;
-        this.tokenUtil = tokenUtil;
+        this.tokenService = tokenService;
         this.customerService = customerService;
     }
 
@@ -42,9 +39,9 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
             throws IOException, ServletException {
 
-        String authorizationHeader = req.getHeader(applicationProperties.getAuthorizationHeader());
+        String authorizationHeader = req.getHeader(Constant.AUTHORIZATION_HEADER);
         if (authorizationHeader == null || !authorizationHeader.startsWith(Constant.BEARER)) {
-            LOGGER.debug("[{}] header is not present.", applicationProperties.getAuthorizationHeader());
+            LOGGER.debug("[{}] header is not present.", Constant.AUTHORIZATION_HEADER);
             chain.doFilter(req, res);
             return;
         }
@@ -55,7 +52,7 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
 
     private UsernamePasswordAuthenticationToken getAuthentication(String authorizationHeader) {
         String token = authorizationHeader.replace(Constant.BEARER, "");
-        String customerId = tokenUtil.getSubjectFromToken(token);
+        String customerId = tokenService.getSubjectFromToken(token);
         if (customerId == null) {
             throw new UsernameNotFoundException("Authorization is failed due to invalid token " + token);
         }

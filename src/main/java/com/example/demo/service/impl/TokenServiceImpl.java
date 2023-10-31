@@ -1,22 +1,23 @@
-package com.example.demo.security;
+package com.example.demo.service.impl;
 
 import com.example.demo.config.ApplicationProperties;
+import com.example.demo.service.ITokenService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Date;
 
-@Component
-public class TokenUtil {
+@Service
+public class TokenServiceImpl implements ITokenService {
 
     private final ApplicationProperties applicationProperties;
 
-    public TokenUtil(ApplicationProperties applicationProperties) {
+    public TokenServiceImpl(ApplicationProperties applicationProperties) {
         this.applicationProperties = applicationProperties;
     }
 
