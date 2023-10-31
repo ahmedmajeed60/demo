@@ -4,8 +4,6 @@ import com.example.demo.config.ApplicationProperties;
 import com.example.demo.dto.CustomerDto;
 import com.example.demo.service.ICustomerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,24 +18,22 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import javax.crypto.SecretKey;
 import java.io.IOException;
-import java.time.Instant;
-import java.util.Base64;
-import java.util.Date;
 
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationFilter.class);
 
-    private final ICustomerService customerService;
+    private final TokenUtil tokenUtil;
     private final ApplicationProperties applicationProperties;
+    private final ICustomerService customerService;
 
-    public AuthenticationFilter(ICustomerService customerService, AuthenticationManager authenticationManager,
-                                ApplicationProperties applicationProperties) {
+    public AuthenticationFilter(AuthenticationManager authenticationManager, TokenUtil tokenUtil,
+                                ApplicationProperties applicationProperties, ICustomerService customerService) {
         super(authenticationManager);
-        this.customerService = customerService;
+        this.tokenUtil = tokenUtil;
         this.applicationProperties = applicationProperties;
+        this.customerService = customerService;
     }
 
     @Override
@@ -59,13 +55,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                                             FilterChain chain, Authentication authResult) {
         String email = ((User) authResult.getPrincipal()).getUsername();
         CustomerDto customerDto = customerService.getCustomerDetailsByEmail(email);
-        String tokenSecret = applicationProperties.getSecretKey();
-        byte[] secretKeyBytes = Base64.getEncoder().encode(tokenSecret.getBytes());
-        SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyBytes);
-        Instant now = Instant.now();
-        String token = Jwts.builder().subject(customerDto.getCustomerId())
-                .expiration(Date.from(now.plusMillis(applicationProperties.getTokenExpiry())))
-                .issuedAt(Date.from(now)).signWith(secretKey, Jwts.SIG.HS512).compact();
+        String token = tokenUtil.generateToken(customerDto.getCustomerId());
         response.addHeader(applicationProperties.getTokenHeader(), token);
         response.addHeader(applicationProperties.getCustomerIdHeader(), customerDto.getCustomerId());
         LOGGER.debug("Authentication is successful for customerId [{}].", customerDto.getCustomerId());

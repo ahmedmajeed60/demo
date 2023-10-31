@@ -24,13 +24,15 @@ public class WebSecurityConfig {
     private final ICustomerService customerService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ApplicationProperties applicationProperties;
+    private final TokenUtil tokenUtil;
 
     @Autowired
     public WebSecurityConfig(ICustomerService customerService, BCryptPasswordEncoder bCryptPasswordEncoder,
-                             ApplicationProperties applicationProperties) {
+                             ApplicationProperties applicationProperties, TokenUtil tokenUtil) {
         this.customerService = customerService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.applicationProperties = applicationProperties;
+        this.tokenUtil = tokenUtil;
     }
 
     @Bean
@@ -42,7 +44,7 @@ public class WebSecurityConfig {
                 .passwordEncoder(bCryptPasswordEncoder);
         AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
         AuthenticationFilter authenticationFilter =
-                new AuthenticationFilter(customerService, authenticationManager, applicationProperties);
+                new AuthenticationFilter(authenticationManager, tokenUtil, applicationProperties, customerService);
         authenticationFilter.setFilterProcessesUrl(applicationProperties.getLoginEndpoint());
         return http.authorizeHttpRequests(auth -> auth
                         .requestMatchers(new AntPathRequestMatcher(Constant.ACTUATOR_URL)).permitAll()
@@ -50,7 +52,7 @@ public class WebSecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher(Constant.CUSTOMER_URL)).permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilter(new AuthorizationFilter(authenticationManager, applicationProperties))
+                .addFilter(new AuthorizationFilter(authenticationManager, applicationProperties, tokenUtil))
                 .addFilter(authenticationFilter)
                 .authenticationManager(authenticationManager)
                 .csrf().disable()
