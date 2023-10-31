@@ -49,6 +49,8 @@ public class WebSecurityConfig {
         return http.authorizeHttpRequests(auth -> auth
                         .requestMatchers(new AntPathRequestMatcher(Constant.ACTUATOR_URL)).permitAll()
                         .requestMatchers(new AntPathRequestMatcher(Constant.H2_CONSOLE_URL)).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher(Constant.OPEN_API_URL)).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher(Constant.SWAGGER_URL)).permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilter(new AuthorizationFilter(authenticationManager, applicationProperties,

@@ -46,7 +46,9 @@ application:
   customerIdHeader: customerId
   authorizationHeader: Authorization
   loginEndpoint: /login
-
+springdoc:
+  api-docs:
+    path: /api-docs
 
 
 
