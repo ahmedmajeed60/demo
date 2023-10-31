@@ -5,6 +5,7 @@ import com.example.demo.response.ApiResponse;
 import com.example.demo.response.ResponseBuilder;
 import com.example.demo.service.ICustomerService;
 import com.example.demo.util.Constant;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -23,6 +24,7 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @PreAuthorize(Constant.HAS_ADMIN_ROLE)
     @PostMapping(
             produces = MediaType.APPLICATION_JSON_VALUE,
@@ -33,6 +35,7 @@ public class CustomerController {
         return ResponseEntity.ok(ResponseBuilder.buildSuccessResponse(customerDtoResponse));
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @PreAuthorize(Constant.HAS_ADMIN_OR_CLIENT_ROLE)
     @GetMapping("/{customerId}")
     public ResponseEntity<ApiResponse<CustomerDto>> getCustomerByCustomerId(
@@ -41,6 +44,7 @@ public class CustomerController {
         return ResponseEntity.ok(ResponseBuilder.buildSuccessResponse(customerDtoResponse));
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @PreAuthorize(Constant.HAS_ADMIN_ROLE)
     @PutMapping("/{customerId}")
     public ResponseEntity<ApiResponse<CustomerDto>> updateCustomer(
@@ -50,6 +54,7 @@ public class CustomerController {
         return ResponseEntity.ok(ResponseBuilder.buildSuccessResponse(customerDtoResponse));
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @PreAuthorize(Constant.HAS_ADMIN_ROLE)
     @DeleteMapping("/{customerId}")
     public ResponseEntity<ApiResponse<String>> deactivateCustomer(
