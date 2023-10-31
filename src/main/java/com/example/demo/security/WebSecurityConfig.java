@@ -49,10 +49,10 @@ public class WebSecurityConfig {
         return http.authorizeHttpRequests(auth -> auth
                         .requestMatchers(new AntPathRequestMatcher(Constant.ACTUATOR_URL)).permitAll()
                         .requestMatchers(new AntPathRequestMatcher(Constant.H2_CONSOLE_URL)).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher(Constant.CUSTOMER_URL)).permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilter(new AuthorizationFilter(authenticationManager, applicationProperties, tokenUtil))
+                .addFilter(new AuthorizationFilter(authenticationManager, applicationProperties,
+                        tokenUtil, customerService))
                 .addFilter(authenticationFilter)
                 .authenticationManager(authenticationManager)
                 .csrf().disable()

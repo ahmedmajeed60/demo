@@ -16,7 +16,7 @@ import java.io.Serializable;
 public class CustomerDto implements Serializable {
 
     @JsonIgnore
-    private Integer id;
+    private Long id;
 
     @Size(min = 2, max = 20)
     @NotNull(message = "FirstName cannot be null")
@@ -44,4 +44,6 @@ public class CustomerDto implements Serializable {
     private String password;
 
     private String customerId;
+
+    private String role;
 }

@@ -11,7 +11,7 @@ public class CustomerEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer id;
+    private Long id;
 
     @Column(name = "first_name", nullable = false, length = 20)
     private String firstName;
@@ -27,4 +27,8 @@ public class CustomerEntity {
 
     @Column(name = "password", nullable = false, unique = true)
     private String password;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id")
+    private RoleEntity role;
 }

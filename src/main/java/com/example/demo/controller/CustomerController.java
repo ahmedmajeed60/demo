@@ -4,10 +4,12 @@ import com.example.demo.dto.CustomerDto;
 import com.example.demo.response.ApiResponse;
 import com.example.demo.response.ResponseBuilder;
 import com.example.demo.service.ICustomerService;
+import com.example.demo.util.Constant;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +26,7 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
+    @PreAuthorize(Constant.HAS_ADMIN_ROLE)
     @PostMapping(
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)

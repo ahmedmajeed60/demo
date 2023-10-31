@@ -1,6 +1,8 @@
 package com.example.demo.security;
 
 import com.example.demo.config.ApplicationProperties;
+import com.example.demo.dto.CustomerDto;
+import com.example.demo.service.ICustomerService;
 import com.example.demo.util.Constant;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -10,12 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 
 public class AuthorizationFilter extends BasicAuthenticationFilter {
 
@@ -23,13 +26,16 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
 
     private final ApplicationProperties applicationProperties;
     private final TokenUtil tokenUtil;
+    private final ICustomerService customerService;
 
     public AuthorizationFilter(AuthenticationManager authenticationManager,
                                ApplicationProperties applicationProperties,
-                               TokenUtil tokenUtil) {
+                               TokenUtil tokenUtil,
+                               ICustomerService customerService) {
         super(authenticationManager);
         this.applicationProperties = applicationProperties;
         this.tokenUtil = tokenUtil;
+        this.customerService = customerService;
     }
 
     @Override
@@ -54,7 +60,10 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
             throw new UsernameNotFoundException("Authorization is failed due to invalid token " + token);
         }
         LOGGER.debug("Authorization is successful for customerId [{}].", customerId);
-        return new UsernamePasswordAuthenticationToken(customerId, null, new ArrayList<>());
+        CustomerDto customerDto = customerService.getCustomerDetailsByCustomerId(customerId);
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(
+                Constant.ROLE + customerDto.getRole());
+        return new UsernamePasswordAuthenticationToken(customerId, null, List.of(simpleGrantedAuthority));
     }
 
 

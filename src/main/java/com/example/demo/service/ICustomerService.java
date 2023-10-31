@@ -7,4 +7,6 @@ public interface ICustomerService extends UserDetailsService {
     CustomerDto createCustomer(CustomerDto userDetails);
 
     CustomerDto getCustomerDetailsByEmail(String email);
+
+    CustomerDto getCustomerDetailsByCustomerId(String customerId);
 }
