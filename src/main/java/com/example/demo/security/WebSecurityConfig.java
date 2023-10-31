@@ -54,7 +54,7 @@ public class WebSecurityConfig {
                 .addFilter(new AuthorizationFilter(authenticationManager, tokenService, customerService))
                 .authenticationManager(authenticationManager)
                 .cors(withDefaults())
-                .csrf((csrf) -> csrf.disable())
+                .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }
