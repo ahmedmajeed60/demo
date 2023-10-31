@@ -9,54 +9,37 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" primaryKeyName="customer_id_pk"/>
             </column>
+            <column name="customer_id" type="varchar(250)">
+                <constraints unique="true" nullable="false"/>
+            </column>
             <column name="first_name" type="varchar(20)">
-                <constraints nullable="false" uniqueConstraintName="customer_firstName_notNullable"/>
+                <constraints nullable="false"/>
             </column>
             <column name="last_name" type="varchar(20)">
-                <constraints nullable="false" uniqueConstraintName="customer_lastName_notNullable"/>
+                <constraints nullable="false"/>
             </column>
             <column name="email" type="varchar(50)">
-                <constraints unique="true" nullable="false" uniqueConstraintName="customer_email_notNullable_unique"/>
-            </column>
-            <column name="customer_id" type="varchar(250)">
-                <constraints unique="true" nullable="false"
-                             uniqueConstraintName="customer_customerId_notNullable_unique"/>
+                <constraints unique="true" nullable="false"/>
             </column>
             <column name="password" type="varchar(250)">
-                <constraints unique="true" nullable="false"
-                             uniqueConstraintName="customer_password_notNullable_unique"/>
+                <constraints nullable="false"/>
             </column>
-            <column name="role_id" type="bigint">
-                <constraints unique="false" nullable="false"/>
+            <column name="role" type="varchar(20)">
+                <constraints nullable="false"/>
             </column>
-        </createTable>
-        <createTable tableName="Role">
-            <column name="id" type="bigint" autoIncrement="true">
-                <constraints primaryKey="true" primaryKeyName="role_id_pk"/>
-            </column>
-            <column name="name" type="varchar(20)">
-                <constraints unique="true" nullable="false" uniqueConstraintName="role_name_notNullable_unique"/>
+            <column name="active" type="boolean">
+                <constraints nullable="false"/>
             </column>
         </createTable>
-        <addForeignKeyConstraint baseTableName="Customer" baseColumnNames="role_id" constraintName="customer_role_fk"
-                                 referencedTableName="Role"
-                                 referencedColumnNames="id"/>
-        <insert tableName="Role">
-            <column name="id" value="1"/>
-            <column name="name" value="ADMIN"/>
-        </insert>
-        <insert tableName="Role">
-            <column name="id" value="2"/>
-            <column name="name" value="CLIENT"/>
-        </insert>
         <insert tableName="Customer">
             <column name="id" value="100"/>
+            <column name="customer_id" value="610e3bc4-12b0-4e53-be8a-47f5153e05de"/>
             <column name="first_name" value="ahmed"/>
             <column name="last_name" value="majeed"/>
             <column name="email" value="ahmedmajeed60@gmail.com"/>
             <column name="password" value="$2a$10$Y.yaRsbyzmNXkLSBqUnc2OLQVvctHW9wWZY7YyIvyk6feU4rEdTfq"/>
-            <column name="customer_id" value="610e3bc4-12b0-4e53-be8a-47f5153e05de"/>
-            <column name="role_id" value="1"/>
+            <column name="role" value="ADMIN"/>
+            <column name="active" value="true"/>
         </insert>
         <insert tableName="Customer">
             <column name="id" value="101"/>
@@ -65,7 +48,8 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
             <column name="email" value="junaidahmed60@gmail.com"/>
             <column name="password" value="$2a$10$kw7IikHItBRvA3UeVpOAreA1tISIn4w0jnlCrkQaFGBUH2pIHLdhu"/>
             <column name="customer_id" value="33b09170-ce8b-476d-888e-a96d5e1bd36a"/>
-            <column name="role_id" value="2"/>
+            <column name="role" value="CLIENT"/>
+            <column name="active" value="true"/>
         </insert>
     </changeSet>
 </databaseChangeLog>

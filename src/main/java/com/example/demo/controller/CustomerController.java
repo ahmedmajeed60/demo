@@ -27,16 +27,18 @@ public class CustomerController {
     @PostMapping(
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse<CustomerDto>> createCustomer(@RequestBody @Valid CustomerDto customerDto) {
-        return ResponseEntity.ok(ResponseBuilder.buildSuccessResponse(customerService.createCustomer(customerDto)));
+    public ResponseEntity<ApiResponse<CustomerDto>> createCustomer(
+            @RequestBody @Valid CustomerDto customerDto) {
+        CustomerDto customerDtoResponse = customerService.createCustomer(customerDto);
+        return ResponseEntity.ok(ResponseBuilder.buildSuccessResponse(customerDtoResponse));
     }
 
     @PreAuthorize(Constant.HAS_ADMIN_OR_CLIENT_ROLE)
     @GetMapping("/{customerId}")
     public ResponseEntity<ApiResponse<CustomerDto>> getCustomerByCustomerId(
             @PathVariable(name = "customerId") String customerId) {
-        return ResponseEntity.ok(ResponseBuilder.buildSuccessResponse(
-                customerService.getCustomerByCustomerId(customerId)));
+        CustomerDto customerDtoResponse = customerService.getCustomerByCustomerId(customerId);
+        return ResponseEntity.ok(ResponseBuilder.buildSuccessResponse(customerDtoResponse));
     }
 
     @PreAuthorize(Constant.HAS_ADMIN_ROLE)
@@ -44,7 +46,15 @@ public class CustomerController {
     public ResponseEntity<ApiResponse<CustomerDto>> updateCustomer(
             @PathVariable(name = "customerId") String customerId,
             @RequestBody @Valid CustomerDto customerDto) {
-        return ResponseEntity.ok(ResponseBuilder.buildSuccessResponse(
-                customerService.updateCustomer(customerId, customerDto)));
+        CustomerDto customerDtoResponse = customerService.updateCustomer(customerId, customerDto);
+        return ResponseEntity.ok(ResponseBuilder.buildSuccessResponse(customerDtoResponse));
+    }
+
+    @PreAuthorize(Constant.HAS_ADMIN_ROLE)
+    @DeleteMapping("/{customerId}")
+    public ResponseEntity<ApiResponse<String>> deactivateCustomer(
+            @PathVariable(name = "customerId") String customerId) {
+        customerService.deactivateCustomer(customerId);
+        return ResponseEntity.ok(ResponseBuilder.buildSuccessResponse("Customer is deactivated successfully!"));
     }
 }

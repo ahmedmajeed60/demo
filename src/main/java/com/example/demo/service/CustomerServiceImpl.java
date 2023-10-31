@@ -3,7 +3,6 @@ package com.example.demo.service;
 import com.example.demo.dto.CustomerDto;
 import com.example.demo.entity.CustomerEntity;
 import com.example.demo.repository.CustomerRepository;
-import com.example.demo.repository.RoleRepository;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,23 +21,21 @@ public class CustomerServiceImpl implements ICustomerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerServiceImpl.class);
 
     private final CustomerRepository customerRepository;
-    private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public CustomerServiceImpl(CustomerRepository customerRepository, RoleRepository roleRepository,
+    public CustomerServiceImpl(CustomerRepository customerRepository,
                                BCryptPasswordEncoder bCryptPasswordEncoder,
                                ModelMapper modelMapper) {
         this.customerRepository = customerRepository;
-        this.roleRepository = roleRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.modelMapper = modelMapper;
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        CustomerEntity customerEntity = customerRepository.findByEmail(email);
+        CustomerEntity customerEntity = customerRepository.findByEmailAndActive(email, true);
         if (customerEntity == null) {
             throw new UsernameNotFoundException(email);
         }
@@ -51,49 +48,47 @@ public class CustomerServiceImpl implements ICustomerService {
         customerDto.setCustomerId(UUID.randomUUID().toString());
         customerDto.setPassword(bCryptPasswordEncoder.encode(customerDto.getPassword()));
         CustomerEntity customerEntity = modelMapper.map(customerDto, CustomerEntity.class);
-        customerEntity.setRole(roleRepository.findByName(customerDto.getRole()));
         customerRepository.save(customerEntity);
         LOGGER.debug("Customer with email [{}] is created successfully and assigned id [{}]",
                 customerDto.getEmail(), customerDto.getCustomerId());
-        customerDto = modelMapper.map(customerEntity, CustomerDto.class);
-        customerDto.setRole(customerEntity.getRole().getName());
-        return customerDto;
+        return modelMapper.map(customerEntity, CustomerDto.class);
     }
 
     @Override
     public CustomerDto getCustomerByEmail(String email) {
-        CustomerEntity customerEntity = customerRepository.findByEmail(email);
+        CustomerEntity customerEntity = customerRepository.findByEmailAndActive(email, true);
         if (customerEntity == null) {
             throw new UsernameNotFoundException(email);
         }
-        CustomerDto customerDto = modelMapper.map(customerEntity, CustomerDto.class);
-        customerDto.setRole(customerEntity.getRole().getName());
-        return customerDto;
+        return modelMapper.map(customerEntity, CustomerDto.class);
     }
 
     @Override
     public CustomerDto getCustomerByCustomerId(String customerId) {
-        CustomerEntity customerEntity = customerRepository.findByCustomerId(customerId);
+        CustomerEntity customerEntity = customerRepository.findByCustomerIdAndActive(customerId, true);
         if (customerEntity == null) {
             throw new IllegalArgumentException("Customer doesn't exist with customer id " + customerId);
         }
-        CustomerDto customerDto = modelMapper.map(customerEntity, CustomerDto.class);
-        customerDto.setRole(customerEntity.getRole().getName());
-        return customerDto;
+        return modelMapper.map(customerEntity, CustomerDto.class);
     }
 
     @Override
     public CustomerDto updateCustomer(String customerId, CustomerDto customerDto) {
-        CustomerEntity customerEntity = customerRepository.findByCustomerId(customerId);
+        CustomerEntity customerEntity = customerRepository.findByCustomerIdAndActive(customerId, true);
         customerEntity.setEmail(customerDto.getEmail());
         customerEntity.setPassword(bCryptPasswordEncoder.encode(customerDto.getPassword()));
         customerEntity.setFirstName(customerDto.getFirstName());
         customerEntity.setLastName(customerDto.getLastName());
-        customerEntity.setRole(roleRepository.findByName(customerDto.getRole()));
+        customerEntity.setRole(customerDto.getRole());
         customerRepository.save(customerEntity);
         LOGGER.debug("Customer with email [{}] is updated successfully", customerDto.getEmail());
-        customerDto = modelMapper.map(customerEntity, CustomerDto.class);
-        customerDto.setRole(customerEntity.getRole().getName());
-        return customerDto;
+        return modelMapper.map(customerEntity, CustomerDto.class);
+    }
+
+    @Override
+    public void deactivateCustomer(String customerId) {
+        CustomerEntity customerEntity = customerRepository.findByCustomerIdAndActive(customerId, true);
+        customerEntity.setActive(false);
+        customerRepository.save(customerEntity);
     }
 }

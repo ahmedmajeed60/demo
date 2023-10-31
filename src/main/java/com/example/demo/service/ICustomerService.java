@@ -11,4 +11,6 @@ public interface ICustomerService extends UserDetailsService {
     CustomerDto getCustomerByCustomerId(String customerId);
 
     CustomerDto updateCustomer(String customerId, CustomerDto customerDto);
+
+    void deactivateCustomer(String customerId);
 }

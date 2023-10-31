@@ -1,6 +1,7 @@
 package com.example.demo.dto;
 
 import com.example.demo.annotation.IgnoreWhitespace;
+import com.example.demo.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -17,6 +18,8 @@ public class CustomerDto implements Serializable {
 
     @JsonIgnore
     private Long id;
+
+    private String customerId;
 
     @Size(min = 2, max = 20)
     @NotNull(message = "FirstName cannot be null")
@@ -43,7 +46,8 @@ public class CustomerDto implements Serializable {
     @IgnoreWhitespace(message = "Password is not valid")
     private String password;
 
-    private String customerId;
+    private Role role;
 
-    private String role;
+    @JsonIgnore
+    private Boolean active;
 }

@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.example.demo.enums.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +14,9 @@ public class CustomerEntity {
     @Column(name = "id")
     private Long id;
 
+    @Column(name = "customer_id", nullable = false, length = 250, unique = true)
+    private String customerId;
+
     @Column(name = "first_name", nullable = false, length = 20)
     private String firstName;
 
@@ -22,13 +26,13 @@ public class CustomerEntity {
     @Column(name = "email", nullable = false, length = 50, unique = true)
     private String email;
 
-    @Column(name = "customer_id", nullable = false, unique = true)
-    private String customerId;
-
-    @Column(name = "password", nullable = false, unique = true)
+    @Column(name = "password", nullable = false, length = 250)
     private String password;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "role_id")
-    private RoleEntity role;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false, length = 20)
+    private Role role;
+
+    @Column(name = "active", nullable = false)
+    private Boolean active = true;
 }
