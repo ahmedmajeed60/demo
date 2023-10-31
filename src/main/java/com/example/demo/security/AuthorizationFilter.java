@@ -60,7 +60,7 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
             throw new UsernameNotFoundException("Authorization is failed due to invalid token " + token);
         }
         LOGGER.debug("Authorization is successful for customerId [{}].", customerId);
-        CustomerDto customerDto = customerService.getCustomerDetailsByCustomerId(customerId);
+        CustomerDto customerDto = customerService.getCustomerByCustomerId(customerId);
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(
                 Constant.ROLE + customerDto.getRole());
         return new UsernamePasswordAuthenticationToken(customerId, null, List.of(simpleGrantedAuthority));

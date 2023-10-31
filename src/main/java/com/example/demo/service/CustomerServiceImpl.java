@@ -61,7 +61,7 @@ public class CustomerServiceImpl implements ICustomerService {
     }
 
     @Override
-    public CustomerDto getCustomerDetailsByEmail(String email) {
+    public CustomerDto getCustomerByEmail(String email) {
         CustomerEntity customerEntity = customerRepository.findByEmail(email);
         if (customerEntity == null) {
             throw new UsernameNotFoundException(email);
@@ -72,12 +72,27 @@ public class CustomerServiceImpl implements ICustomerService {
     }
 
     @Override
-    public CustomerDto getCustomerDetailsByCustomerId(String customerId) {
+    public CustomerDto getCustomerByCustomerId(String customerId) {
         CustomerEntity customerEntity = customerRepository.findByCustomerId(customerId);
         if (customerEntity == null) {
             throw new IllegalArgumentException("Customer doesn't exist with customer id " + customerId);
         }
         CustomerDto customerDto = modelMapper.map(customerEntity, CustomerDto.class);
+        customerDto.setRole(customerEntity.getRole().getName());
+        return customerDto;
+    }
+
+    @Override
+    public CustomerDto updateCustomer(String customerId, CustomerDto customerDto) {
+        CustomerEntity customerEntity = customerRepository.findByCustomerId(customerId);
+        customerEntity.setEmail(customerDto.getEmail());
+        customerEntity.setPassword(bCryptPasswordEncoder.encode(customerDto.getPassword()));
+        customerEntity.setFirstName(customerDto.getFirstName());
+        customerEntity.setLastName(customerDto.getLastName());
+        customerEntity.setRole(roleRepository.findByName(customerDto.getRole()));
+        customerRepository.save(customerEntity);
+        LOGGER.debug("Customer with email [{}] is updated successfully", customerDto.getEmail());
+        customerDto = modelMapper.map(customerEntity, CustomerDto.class);
         customerDto.setRole(customerEntity.getRole().getName());
         return customerDto;
     }

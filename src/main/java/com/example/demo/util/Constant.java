@@ -11,4 +11,5 @@ public class Constant {
     public static final String ROLE = "ROLE_";
     public static final String HAS_ADMIN_ROLE = "hasRole('ADMIN')";
     public static final String HAS_CLIENT_ROLE = "hasRole('CLIENT')";
+    public static final String HAS_ADMIN_OR_CLIENT_ROLE = "hasAnyRole('ADMIN', 'CLIENT')";
 }
