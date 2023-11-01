@@ -34,7 +34,7 @@ public class CustomerDto implements Serializable {
     private String lastName;
 
     @Email(message = "Email is not valid")
-    @Size(min = 2, max = 50)
+    @Size(min = 10, max = 50)
     @NotNull(message = "Email cannot be null")
     @IgnoreWhitespace(message = "Email is not valid")
     private String email;

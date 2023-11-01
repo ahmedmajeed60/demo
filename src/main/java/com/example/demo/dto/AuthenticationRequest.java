@@ -17,7 +17,7 @@ import java.io.Serializable;
 public class AuthenticationRequest implements Serializable {
 
     @Email(message = "Email is not valid")
-    @Size(min = 2, max = 50)
+    @Size(min = 10, max = 50)
     @NotNull(message = "Email cannot be null")
     @IgnoreWhitespace(message = "Email is not valid")
     private String email;
