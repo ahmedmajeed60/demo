@@ -8,7 +8,7 @@ spring:
     username: admin
     password: admin
   liquibase:
-    change-log: classpath:/db/changelog/db.changelog-master.xml
+    change-log: classpath:/db/changelog/db.changelog-master-test.xml
 application:
   secretKey: hfgry463hf746hf573ydh475fhy5739hfgry463hf746hf573ydh475fhy5739hfgry463hf746hf573ydh475fhy5739
   tokenExpiry: 86400000
