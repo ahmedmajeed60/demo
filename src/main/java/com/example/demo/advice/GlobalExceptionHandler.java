@@ -1,4 +1,4 @@
-package com.example.demo.exception;
+package com.example.demo.advice;
 
 import com.example.demo.response.ApiResponse;
 import com.example.demo.response.ResponseBuilder;
@@ -7,10 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(UsernameNotFoundException.class)
