@@ -51,6 +51,5 @@ public class CustomerDto implements Serializable {
     @NotNull(message = "Role cannot be null")
     private Role role;
 
-    @JsonIgnore
     private Boolean active;
 }
